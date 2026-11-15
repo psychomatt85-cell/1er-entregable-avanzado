@@ -1,0 +1,373 @@
+{
+  "name": "1er entregable avanzado",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -416,
+        -64
+      ],
+      "id": "5087f84f-a8b5-493e-afa1-36c47e1b9ac4",
+      "name": "When chat message received",
+      "webhookId": "26cb44bd-5ceb-4e13-b7f7-a40d9bc56afa"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -192,
+        208
+      ],
+      "id": "27e6c9c0-b109-4bbd-be0f-b68cc16c6153",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        176
+      ],
+      "id": "a3a8048b-e826-4070-853c-f8268389007e",
+      "name": "Groq Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "groqApi": {
+          "id": "7pLQvP8P4AEd54N7",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Usa esta herramienta para obtener información relevante para los cursos",
+        "documentId": {
+          "__rl": true,
+          "value": "12BnsJzKsredGmpaNKTXUGzaCOwvjdfAmoegs9HRICTg",
+          "mode": "list",
+          "cachedResultName": "Catálogo de Cursos - Academia Online de Tecnología e Informática",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12BnsJzKsredGmpaNKTXUGzaCOwvjdfAmoegs9HRICTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12BnsJzKsredGmpaNKTXUGzaCOwvjdfAmoegs9HRICTg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -80,
+        400
+      ],
+      "id": "d41efe4b-62fd-4943-b3f0-231fbbeb7f9d",
+      "name": "Base de datos de cursos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H6IrKytYW6yk7Kr5",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Instruccion del usuario: {{ $json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# GESTIÓN DE CONTACTOS – GOOGLE SHEETS\n\nTenés acceso a una segunda herramienta de Google Sheets destinada al registro de contactos de Academia Horizonte.\n\nTu objetivo es recopilar progresivamente información de las personas que se comunican con la academia y mantener actualizado su registro.\n\n## Información del contacto\n\nRegistrá únicamente los datos que el usuario haya proporcionado explícitamente o que estén disponibles en el contexto de la conversación.\n\nLos datos que se deben recopilar son los que estén definidos en la planilla de contactos.\n\nNo solicites todos los datos juntos. Obtené la información naturalmente durante la conversación, priorizando una experiencia amigable y fluida.\n\n## Reglas de registro\n\n1. Cuando identifiques un nuevo contacto, verificá si ya existe un registro para esa persona antes de crear uno nuevo.\n2. Utilizá un identificador único disponible para evitar duplicados.\n3. Si el contacto ya existe, actualizá su registro en lugar de crear uno nuevo.\n4. No sobrescribas información existente con campos vacíos o datos no confirmados.\n5. No inventes datos ni completes información por deducción.\n6. Registrá los intereses del usuario, cursos consultados y cualquier otra información relevante que permita continuar el asesoramiento.\n7. Actualizá el registro a medida que avance la conversación y se obtengan nuevos datos.\n8. No le solicites nuevamente al usuario información que ya proporcionó.\n9. No expongas al usuario información interna de la planilla.\n\n## Información comercial del contacto\n\nCuando corresponda, registrá:\n- Curso o cursos de interés.\n- Consultas realizadas.\n- Interés en inscribirse.\n- Dudas o impedimentos manifestados.\n- Estado de la conversación.\n- Necesidad de seguimiento comercial.\n- Observaciones relevantes.\n\nUtilizá exclusivamente los campos disponibles en la planilla.\n\n## Privacidad y transparencia\n\nSolicitá solamente información necesaria para la atención e inscripción.\n\nNo solicites información sensible que no sea necesaria para el proceso.\n\nNo le informes al usuario que sus datos fueron registrados o actualizados si no tenés confirmación de que la operación se realizó correctamente.\n\n# USO DE LAS HERRAMIENTAS\n\nDisponés de dos herramientas independientes:\n\n**GOOGLE SHEETS – CURSOS**\n- Consultar información académica y comercial.\n- Obtener precios y características de los cursos.\n- Comparar alternativas.\n\n**GOOGLE SHEETS – CONTACTOS**\n- Buscar contactos existentes.\n- Registrar nuevos contactos.\n- Actualizar información de contactos existentes.\n- deja constancia del id del usuario, la consulta y la respuesta\nNunca utilices una herramienta para una finalidad diferente de la indicada.\n\nLa información de cursos no debe almacenarse como si fuera información de contacto y viceversa.\n\n#Escalamiento de respuesta\nEn caso de solictar reembolsos o descuentos, derivar a un nivel 2 \nPone un flag que diga: NIVEL 2\n\n#Formato de salida:\nJson estructurado\n{\n\t\"Respuesta\": \"Respuesta generada al cliente\",\n  \"Nivel 2\": \"Nivel 2\",\n  \"consulta\":\"consulta del cliente\"\n}",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -192,
+        -64
+      ],
+      "id": "a9f9eae9-b1de-4811-88a1-91165f5966cb",
+      "name": "Responde consultas",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Respuesta\": \"Respuesta generada al cliente\",\n  \"Nivel 2\": \"Nivel 2\",\n  \"consulta\":\"consulta del cliente\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        256
+      ],
+      "id": "94793332-5856-45f6-a09d-a7df241f335a",
+      "name": "estructura la respuesta"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "45d5ee2f-1503-410f-8919-6eb9a11cff57",
+              "leftValue": "={{ $json.output[\"Nivel 2\"] }}",
+              "rightValue": "=NIVEL 2",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "8ee279ba-f769-4450-9a7b-da19ec8e0947",
+              "leftValue": "={{ $json.output[\"Nivel 2\"] }}",
+              "rightValue": "=NIVEL 2",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        176,
+        -48
+      ],
+      "id": "01c7139d-ad9e-47e6-954f-2a6ad8479df1",
+      "name": "deriva segun nivel"
+    },
+    {
+      "parameters": {
+        "content": "recibe el mensaje del cliente"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -496,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "5fe9e555-0907-4ddf-a659-c4f70fade8ce",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "analiza y responde la consulta"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -208,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "313df011-2af0-4c06-9611-15fbc1574d4d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Modelo de LLM"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -496,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "86a7c232-7739-4e03-bb8f-36fd9b1c6b44",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Listado de cursos y precios",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "64c075ea-1afb-455b-adb0-7f0e26383225",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "estructura el formato de salida de la respuesta",
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "4620f56b-59a9-4a54-9a19-8177d3ed0ceb",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "actua segun el nivel de la consutla"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        112,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "ee0b20a3-bf52-40d9-97d5-111d8931f90e",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "Responde por mail",
+        "height": 192,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        384,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "65069984-e3d2-4371-a298-499a837e8059",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "sendTo": "psychomatt85@gmail.com",
+        "subject": "=Respuesta consulta  {{ $('Responde consultas').item.json.output.consulta }}",
+        "message": "={{ $('Responde consultas').item.json.output.Respuesta }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -32
+      ],
+      "id": "4922ec29-6b3f-4dfc-87c6-686d63c2fd29",
+      "name": "envia respuesta",
+      "webhookId": "66f9aeb2-0d61-4ac5-b88e-89fc77f4ba40",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "zhHGWVjpfOFEByZs",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Responde consultas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Responde consultas",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Responde consultas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base de datos de cursos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Responde consultas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responde consultas": {
+      "main": [
+        [
+          {
+            "node": "deriva segun nivel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "estructura la respuesta": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Responde consultas",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "deriva segun nivel": {
+      "main": [
+        [],
+        [
+          {
+            "node": "envia respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "07a9611b-9125-4fd2-9558-2e26c15529c1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7e454a2a5bbf5743080b6bb4503025605e9a86e49d8a59d6670c8bff0bda8536"
+  },
+  "nodeGroups": [],
+  "id": "tHV6QJ2JBielhxpz",
+  "tags": []
+}
